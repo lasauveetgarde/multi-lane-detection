@@ -56,6 +56,7 @@ def draw_segmentation_map(image, masks, boxes, labels, args):
             lw = max(round(sum(image.shape) / 2 * 0.003), 2)  # Line width.
             tf = max(lw - 1, 1) # Font thickness.
             p1, p2 = boxes[i][0], boxes[i][1]
+
             if not args.no_boxes:
                 # draw the bounding boxes around the objects
                 cv2.rectangle(
