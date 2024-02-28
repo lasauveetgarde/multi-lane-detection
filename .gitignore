@@ -1,0 +1,24 @@
+# Videos
+*.mp4
+*.avi
+
+# Dataset
+input/road_lane_instance_segmentation
+
+# Outputs images
+*.jpg
+*pyc
+
+# Environments
+.env
+.venv
+.venv38
+env/
+venv/
+venv38/
+ENV/
+env.bak/
+venv.bak/
+venv38.bak/
+
+
