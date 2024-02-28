@@ -4,6 +4,7 @@
 
 # Dataset
 input/road_lane_instance_segmentation
+*.pth
 
 # Outputs images
 *.jpg
