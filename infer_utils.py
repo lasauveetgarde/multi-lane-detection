@@ -43,7 +43,8 @@ def draw_segmentation_map(image, masks, boxes, labels, args):
     for i in range(len(masks)):
         # apply a randon color mask to each object
         color = COLORS[coco_names.index(labels[i])]
-        if masks[i].any() == True:
+        # if masks[i].any() == True:
+        if 'solid-line' in labels and coco_names.index(labels[i]) == 6:
             red_map = np.zeros_like(masks[i]).astype(np.uint8)
             green_map = np.zeros_like(masks[i]).astype(np.uint8)
             blue_map = np.zeros_like(masks[i]).astype(np.uint8)
@@ -56,7 +57,6 @@ def draw_segmentation_map(image, masks, boxes, labels, args):
             lw = max(round(sum(image.shape) / 2 * 0.003), 2)  # Line width.
             tf = max(lw - 1, 1) # Font thickness.
             p1, p2 = boxes[i][0], boxes[i][1]
-
             if not args.no_boxes:
                 # draw the bounding boxes around the objects
                 cv2.rectangle(
