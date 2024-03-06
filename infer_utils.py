@@ -32,7 +32,7 @@ def get_outputs(image, model, threshold):
     labels = [coco_names[i] for i in outputs[0]['labels']]
     return masks, boxes, labels    
 
-def draw_segmentation_map(image, masks, boxes, labels, args):
+def draw_segmentation_map(image, masks, boxes, labels, args, background=None):
     alpha = 1.0
     beta = 1.0 # transparency for the segmentation map
     gamma = 0.0 # scalar added to each sum
@@ -40,11 +40,12 @@ def draw_segmentation_map(image, masks, boxes, labels, args):
     image = np.array(image)
     # convert from RGN to OpenCV BGR format
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    if background is not None:
+        image = background.copy()
     for i in range(len(masks)):
         # apply a randon color mask to each object
         color = COLORS[coco_names.index(labels[i])]
-        # if masks[i].any() == True:
-        if 'solid-line' in labels and coco_names.index(labels[i]) == 6:
+        if 'solid-line' in labels and coco_names.index(labels[i]) == 2:
             red_map = np.zeros_like(masks[i]).astype(np.uint8)
             green_map = np.zeros_like(masks[i]).astype(np.uint8)
             blue_map = np.zeros_like(masks[i]).astype(np.uint8)
