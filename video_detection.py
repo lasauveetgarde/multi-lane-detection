@@ -21,7 +21,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-VIDEO_PATH = 'input/inference_data/video_3.mp4'
+VIDEO_PATH = 'input/inference_data/video_2.mp4'
 # VIDEO_PATH = 0
 
 WEIGHTS_PATH = 'outputs/training/road_line/model_15.pth'

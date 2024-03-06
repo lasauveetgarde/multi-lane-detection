@@ -48,7 +48,7 @@ model.roi_heads.mask_predictor.mask_fcn_logits = nn.Conv2d(256, len(class_names)
 
 ckpt = torch.load(WEIGHTS_PATH)
 model.load_state_dict(ckpt['model'])
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model.to(device).eval()
 
 transform = transforms.Compose([
@@ -60,7 +60,7 @@ class image_converter:
     def __init__(self) -> None:
         rospy.init_node('video_frame', anonymous=True)
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/rs_camera/color/image_raw",Image,self.callback)
+        self.image_sub = rospy.Subscriber("/cam0/image_raw",Image,self.callback)
         self.image = np.zeros((480, 640, 3), dtype='uint8')
         self.dst_folder = rospy.get_param('~dst_folder','test_folder') # the name of the base frame of the robot
         self.rate = rospy.Rate(15)

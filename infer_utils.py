@@ -45,54 +45,54 @@ def draw_segmentation_map(image, masks, boxes, labels, args, background=None):
     for i in range(len(masks)):
         # apply a randon color mask to each object
         color = COLORS[coco_names.index(labels[i])]
-        if 'solid-line' in labels and coco_names.index(labels[i]) == 2:
-            red_map = np.zeros_like(masks[i]).astype(np.uint8)
-            green_map = np.zeros_like(masks[i]).astype(np.uint8)
-            blue_map = np.zeros_like(masks[i]).astype(np.uint8)
-            red_map[masks[i] == 1], green_map[masks[i] == 1], blue_map[masks[i] == 1] = color
-            # combine all the masks into a single image
-            segmentation_map = np.stack([red_map, green_map, blue_map], axis=2)
-            # apply mask on the image
-            cv2.addWeighted(image, alpha, segmentation_map, beta, gamma, image)
+        # if 'solid-line' in labels and coco_names.index(labels[i]) == 2:
+        red_map = np.zeros_like(masks[i]).astype(np.uint8)
+        green_map = np.zeros_like(masks[i]).astype(np.uint8)
+        blue_map = np.zeros_like(masks[i]).astype(np.uint8)
+        red_map[masks[i] == 1], green_map[masks[i] == 1], blue_map[masks[i] == 1] = color
+        # combine all the masks into a single image
+        segmentation_map = np.stack([red_map, green_map, blue_map], axis=2)
+        # apply mask on the image
+        cv2.addWeighted(image, alpha, segmentation_map, beta, gamma, image)
 
-            lw = max(round(sum(image.shape) / 2 * 0.003), 2)  # Line width.
-            tf = max(lw - 1, 1) # Font thickness.
-            p1, p2 = boxes[i][0], boxes[i][1]
-            if not args.no_boxes:
-                # draw the bounding boxes around the objects
-                cv2.rectangle(
-                    image, 
-                    p1, p2, 
-                    color=color, 
-                    thickness=lw,
-                    lineType=cv2.LINE_AA
-                )
-                w, h = cv2.getTextSize(
-                    labels[i], 
-                    cv2.FONT_HERSHEY_SIMPLEX, 
-                    fontScale=lw / 3, 
-                    thickness=tf
-                )[0]  # text width, height
-                w = int(w - (0.20 * w))
-                outside = p1[1] - h >= 3
-                p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-                # put the label text above the objects
-                cv2.rectangle(
-                    image, 
-                    p1, 
-                    p2, 
-                    color=color, 
-                    thickness=-1, 
-                    lineType=cv2.LINE_AA
-                )
-                cv2.putText(
-                    image, 
-                    labels[i], 
-                    (p1[0], p1[1] - 5 if outside else p1[1] + h + 2),
-                    cv2.FONT_HERSHEY_SIMPLEX, 
-                    fontScale=lw / 3.8, 
-                    color=(255, 255, 255), 
-                    thickness=tf, 
-                    lineType=cv2.LINE_AA
-                )
+        lw = max(round(sum(image.shape) / 2 * 0.003), 2)  # Line width.
+        tf = max(lw - 1, 1) # Font thickness.
+        p1, p2 = boxes[i][0], boxes[i][1]
+        if not args.no_boxes:
+            # draw the bounding boxes around the objects
+            cv2.rectangle(
+                image, 
+                p1, p2, 
+                color=color, 
+                thickness=lw,
+                lineType=cv2.LINE_AA
+            )
+            w, h = cv2.getTextSize(
+                labels[i], 
+                cv2.FONT_HERSHEY_SIMPLEX, 
+                fontScale=lw / 3, 
+                thickness=tf
+            )[0]  # text width, height
+            w = int(w - (0.20 * w))
+            outside = p1[1] - h >= 3
+            p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
+            # put the label text above the objects
+            cv2.rectangle(
+                image, 
+                p1, 
+                p2, 
+                color=color, 
+                thickness=-1, 
+                lineType=cv2.LINE_AA
+            )
+            cv2.putText(
+                image, 
+                labels[i], 
+                (p1[0], p1[1] - 5 if outside else p1[1] + h + 2),
+                cv2.FONT_HERSHEY_SIMPLEX, 
+                fontScale=lw / 3.8, 
+                color=(255, 255, 255), 
+                thickness=tf, 
+                lineType=cv2.LINE_AA
+            )
     return image

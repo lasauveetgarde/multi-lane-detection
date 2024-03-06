@@ -1,4 +1,4 @@
-#!/home/blackwidow/catkin_ws/src/multi_lane_detection/venv38/bin/python3 
+#!/home/katya/catkin_ws/src/multi-lane-detection/venv38/bin/python
 
 import rospy
 import cv2
