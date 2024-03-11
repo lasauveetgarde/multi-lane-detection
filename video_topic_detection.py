@@ -60,7 +60,7 @@ class image_converter:
     def __init__(self) -> None:
         rospy.init_node('video_frame', anonymous=True)
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/cam0/image_raw",Image,self.callback)
+        self.image_sub = rospy.Subscriber("/rs_camera/color/image_raw",Image,self.callback)
         self.image = np.zeros((480, 640, 3), dtype='uint8')
         self.dst_folder = rospy.get_param('~dst_folder','test_folder') # the name of the base frame of the robot
         self.rate = rospy.Rate(15)
