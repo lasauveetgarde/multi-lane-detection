@@ -78,6 +78,29 @@ def draw_segmentation_map(image, masks, boxes, labels, args, background=None):
                     fontScale=lw / 3, 
                     thickness=tf
                 )[0]  # text width, height
+
+                img_height, img_width = image.shape[:2]
+
+                if p1[0] > img_width/2:
+                    cv2.line(
+                        image, 
+                        p1, 
+                        p2, 
+                        color=color, 
+                        thickness=5, 
+                        lineType=cv2.LINE_AA
+                    )
+
+                elif p1[0] < img_width/2:
+                    cv2.line(
+                        image, 
+                        (p2[0],p1[1]), 
+                        (p1[0],p2[1]), 
+                        color=color, 
+                        thickness=5, 
+                        lineType=cv2.LINE_AA
+                    )
+
                 w = int(w - (0.20 * w))
                 outside = p1[1] - h >= 3
                 p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
@@ -100,17 +123,49 @@ def draw_segmentation_map(image, masks, boxes, labels, args, background=None):
                     thickness=tf, 
                     lineType=cv2.LINE_AA
                 )
+
     return image
 
 def array_segmentation_map(image, masks, boxes, labels):
     #convert the original PIL image into NumPy format
     image = np.array(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    lane_array = []
+
+    right_line_array_w = []
+    right_line_array_h = []
+    left_line_array_w = []
+    left_line_array_h = []
+    combined_points = []
     for i in range(len(masks)):
         if  coco_names.index(labels[i]) == 6:
             p1, p2 = boxes[i][0], boxes[i][1]
             # print('this', p1, p2)
-            center_width = (p2[0]-p1[0])/2
-            lane_array = [center_width, p2[1]]
-        return lane_array
+            for right_i_h in range(p1[1], p2[1], int((p2[1]-p1[1])/20)):
+                right_line_array_h.append(right_i_h)
+            
+            for right_i_w in range(p1[0], p2[0], int((p2[0]-p1[0])/len(right_line_array_h))):
+                right_line_array_w.append(right_i_w)
+            
+            if len(right_line_array_h)!=len(right_line_array_w):
+                difference_right=len(right_line_array_w)-len(right_line_array_h)
+                if len(right_line_array_w) > len(right_line_array_h):
+                    del right_line_array_w[-difference_right:]
+
+            right_points = list(zip(right_line_array_w, right_line_array_h))
+
+            for left_i_h in range(p1[1], p2[1], int((p2[1]-p1[1])/20)):
+                left_line_array_h.append(left_i_h)
+            
+            for left_i_w in range(p1[0], p2[0], int((p2[0]-p1[0])/len(left_line_array_h))):
+                left_line_array_w.append(left_i_w)
+            
+            if len(left_line_array_h)!=len(left_line_array_w):
+                difference_right=len(left_line_array_w)-len(left_line_array_h)
+                if len(left_line_array_w) > len(left_line_array_h):
+                    del left_line_array_w[-difference_right:]
+
+            left_points = list(zip(left_line_array_h, left_line_array_h))
+
+            combined_points = right_points + left_points
+
+        return combined_points

@@ -39,19 +39,14 @@ class CountPoints():
             cv_image = self.bridge.imgmsg_to_cv2(data, "32FC1")
             self.image = cv_image
 
-            indices = np.array([[self.result_array[0]],[self.result_array[1]]])[:,0]
-            pix = (indices[1], indices[0])
-            self.pix = np.array(pix)
-            # print(self.pix)
-            if self.intrinsics:
-                depth = cv_image[int(self.pix[0])-1, int(self.pix[1])-1]
-                # print(int(self.pix[0]), int(self.pix[1]), depth)
-                result = rs2.rs2_deproject_pixel_to_point(self.intrinsics, [pix[0], pix[1]], depth)
-
-                self.three_d_coordinate = [result[0]/1000, result[1]/1000, result[2]/1000]
-                # print(f'callback is {self.three_d_coordinate}')
-                # print('Coordinate: %8.2f %8.2f %8.2f.' % (result[0]/1000, result[1]/1000, result[2]/1000))
-
+            self.three_d_coordinate = []
+            for i in range(len(self.result_array)):
+                indices = np.array([[self.result_array[i][0]],[self.result_array[i][1]]])[:,0]
+                pix = (indices[1], indices[0])
+                if self.intrinsics:
+                    depth = cv_image[int(pix[0])-1, int(pix[1])-1]
+                    result = rs2.rs2_deproject_pixel_to_point(self.intrinsics, [pix[0], pix[1]], depth)
+                    self.three_d_coordinate.append([result[0]/1000, result[1]/1000, result[2]/1000])
         except CvBridgeError as e:
             print(e)
     

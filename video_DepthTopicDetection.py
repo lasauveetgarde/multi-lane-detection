@@ -60,7 +60,7 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-def publishPC2(count,xyz):
+def publishPC2(count, xyz_array):
     fields = [
         PointField("x", 0, PointField.FLOAT32, 1),
         PointField("y", 4, PointField.FLOAT32, 1),
@@ -72,13 +72,14 @@ def publishPC2(count,xyz):
     header.frame_id = "base_link"
     header.stamp = rospy.Time.now()
 
-    # x, y = np.meshgrid(np.linspace(-2, 2, width), np.linspace(-2, 2, height))
-    # z = 0.5 * np.sin(2 * x - count / 10.0) * np.sin(2 * y)
-    x=xyz[0]
-    y=xyz[1]
-    # z=xyz[2]
-    points = np.array([x, y, 0, 0]).reshape(4, -1).T
+    points = []
+    for xyz in xyz_array:
+        x = xyz[0]
+        y = xyz[1]
+        # z = xyz[2]
+        points.append([x, y, 1, 0])
 
+    points = np.array(points)
     pc2 = point_cloud2.create_cloud(header, fields, points)
     pub.publish(pc2)
 
@@ -111,8 +112,6 @@ if __name__ == '__main__':
         # Call the modified draw_segmentation_map function with both orig_image and black_image
         result = draw_segmentation_map(depth_frame, masks, boxes, labels, args, background=None)
         result_array = array_segmentation_map(depth_frame, masks, boxes, labels)
-        # print(f'array is {result_array}')
-        # print(f'condition is {result_array!=[]} and {result_array is not None}')
         if result_array!=[] and result_array is not None:
             thrd_point.set_res_arr(result_array=result_array)
             xyz=thrd_point.three_d_coordinate
@@ -129,6 +128,4 @@ if __name__ == '__main__':
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # except Exception as e:
-    #   rospy.loginfo(f'EXCEPTION CATCHED:\n {e}')
     cv2.destroyAllWindows()
